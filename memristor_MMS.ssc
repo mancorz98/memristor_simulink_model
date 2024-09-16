@@ -1,0 +1,36 @@
+component memristor_MMS
+
+nodes
+    p = foundation.electrical.electrical; % +:left
+    n = foundation.electrical.electrical; % -:right
+end
+
+
+parameters
+    Ron = {4e3,'Ohm'};
+    Roff = {100e3,'Ohm'};
+    Von = {0.27,'V'};
+    Voff={-0.27,'V'};
+    tau = {0.0001, 's'};
+    beta = {38.4615, '1/V'};   
+end
+
+variables
+   x = 0;
+    i = { 0, 'A' };
+    v = { 0, 'V' }; 
+    r = {0,'Ohm'};
+end
+
+branches
+    i : p.i -> n.i;
+end
+ 
+equations
+    v == p.v - n.v;
+    x.der == 1/tau * ((1/(1 + exp(-beta * (v-Von)))) * (1-x)-(1-1/(1 + exp(-beta * (v +Voff)))) * x);
+    r == 1/(x/Ron + (1-x)/Roff);
+    i == v/r;
+end
+
+end
